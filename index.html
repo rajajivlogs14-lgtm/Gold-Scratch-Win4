@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>🔥 4-TURN GOLD SCRATCH & WIN | PROFESSIONAL</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 30% 20%, #0a0802, #000000);
+      font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .game-container {
+      max-width: 650px;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      border-radius: 56px;
+      padding: 24px 20px 32px;
+      border: 2px solid rgba(212, 175, 55, 0.7);
+      box-shadow: 0 25px 40px rgba(0,0,0,0.6), 0 0 15px rgba(212,175,55,0.3);
+    }
+
+    .title-section {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .title-section h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #F5E7B2, #D4AF37, #B8860B);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .sub {
+      color: #b8860b;
+      font-size: 0.7rem;
+    }
+
+    .turn-panel {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 15px;
+    }
+    .turn-counter {
+      background: #1a1508;
+      border-radius: 50px;
+      padding: 8px 25px;
+      text-align: center;
+      border: 1px solid #D4AF37;
+      box-shadow: 0 0 10px rgba(212,175,55,0.4);
+      transition: all 0.3s ease;
+    }
+    .turn-label {
+      font-size: 0.7rem;
+      color: #d4af37;
+      letter-spacing: 2px;
+    }
+    .turn-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1;
+      color: #FFD700;
+      text-shadow: 0 0 5px #ff8c00;
+      transition: all 0.2s;
+    }
+
+    .scratch-wrapper {
+      background: #0d0b06;
+      border-radius: 40px;
+      padding: 12px;
+      margin: 10px 0 20px;
+    }
+    .canvas-area {
+      display: flex;
+      justify-content: center;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 32px;
+      cursor: pointer;
+      touch-action: none;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+      background: #1a1a1a;
+    }
+
+    .prize-preview {
+      text-align: center;
+      margin-top: 18px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 40px;
+      padding: 14px;
+      border-left: 4px solid #D4AF37;
+    }
+    .prize-label {
+      font-size: 0.7rem;
+      color: #c9aa4b;
+      letter-spacing: 2px;
+    }
+    .prize-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #FFD966;
+      margin-top: 5px;
+    }
+    .prize-value {
+      font-size: 1.1rem;
+      color: #ffb347;
+    }
+    .status-msg {
+      font-size: 0.8rem;
+      margin-top: 8px;
+      color: #b99b4b;
+    }
+
+    .denied-box, .gameover-box {
+      text-align: center;
+      padding: 50px 20px;
+      background: rgba(0,0,0,0.9);
+      border-radius: 48px;
+      border: 1px solid #D4AF37;
+    }
+    .denied-box h2, .gameover-box h2 {
+      color: #FFD966;
+      margin: 15px 0;
+    }
+    .lock-icon {
+      font-size: 3.5rem;
+    }
+    .info-note {
+      text-align: center;
+      font-size: 0.65rem;
+      margin-top: 18px;
+      color: #5a4a1a;
+    }
+    button {
+      background: linear-gradient(135deg, #D4AF37, #B8860B);
+      border: none;
+      padding: 10px 25px;
+      border-radius: 40px;
+      font-weight: bold;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); text-shadow: 0 0 10px gold; }
+      100% { transform: scale(1); }
+    }
+    .turn-value.animate {
+      animation: pulse 0.5s ease;
+    }
+    @media (max-width: 500px) {
+      .prize-name { font-size: 1rem; }
+      .turn-value { font-size: 1.8rem; }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+</head>
+<body>
+<div id="appRoot"></div>
+
+<script>
+  (function() {
+    // ==================== PRIZE MAPPING ====================
+    const PRIZE_MAP = {
+      99: { name: "🏆 Smart TV (32 inch)", value: "₹9,999" },
+      98: { name: "🧺 Automatic Washing Machine", value: "₹9,500" },
+      96: { name: "🔊 Premium Soundbar System", value: "₹7,999" },
+      89: { name: "🍿 Microwave Oven", value: "₹6,500" },
+      88: { name: "📱 High-End Tablet", value: "₹8,500" },
+      87: { name: "⌚ Smartwatch Premium Edition", value: "₹4,499" },
+      85: { name: "💨 Designer Ceiling Fan", value: "₹3,200" },
+      84: { name: "🥄 Branded Mixer Grinder", value: "₹2,800" },
+      83: { name: "🔥 Induction Cooktop", value: "₹2,500" },
+      77: { name: "📱 Gaming Mobile Phone", value: "₹5,000" },
+      76: { name: "🍟 Air Fryer", value: "₹4,999" },
+      78: { name: "☕ Electric Kettle + Toaster", value: "₹1,500" },
+      66: { name: "🔊 Bluetooth Party Speaker", value: "₹1,999" }
+    };
+    const FALLBACK_WIN = { name: "🎁 Mystery Cash Voucher", value: "₹199" };
+    const LOSE_PRIZE = { name: "😔 Better Luck Next Time!", value: "₹0" };
+
+    // ==================== WEIGHTED RNG (4-TURN) ====================
+    // Turn 1,2,3: 0% win (always 1-59)
+    // Turn 4: 2% win (60-100), 98% lose (50-59 for thrill)
+    function getRandomNumber(turn) {
+      if (turn === 1 || turn === 2 || turn === 3) {
+        return Math.floor(Math.random() * 59) + 1; // 1-59 only
+      } else { // Turn 4 - Final Chance
+        const rand = Math.random() * 100;
+        if (rand < 2) { // 2% win chance
+          return Math.floor(Math.random() * (100 - 60 + 1) + 60);
+        } else {
+          // 98% lose - 80% chance of 50-59 (close to win for thrill)
+          if (Math.random() < 0.8) {
+            return Math.floor(Math.random() * (59 - 50 + 1) + 50);
+          } else {
+            return Math.floor(Math.random() * 49) + 1;
+          }
+        }
+      }
+    }
+
+    function getResult(number, turn) {
+      if (number >= 60 && number <= 100) {
+        if (PRIZE_MAP[number]) {
+          return { number, isWin: true, prize: PRIZE_MAP[number], turn };
+        } else {
+          return { number, isWin: true, prize: FALLBACK_WIN, turn };
+        }
+      } else {
+        return { number, isWin: false, prize: LOSE_PRIZE, turn };
+      }
+    }
+
+    // ==================== DEVICE FINGERPRINT + TOKEN BINDING ====================
+    async function getFingerprint() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 150;
+      canvas.height = 40;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = "#f90";
+      ctx.fillRect(0, 0, 80, 25);
+      ctx.fillStyle = "#069";
+      ctx.font = "10px Arial";
+      ctx.fillText("Scratch4Turn", 5, 18);
+      const pixelData = ctx.getImageData(0, 0, 70, 20).data.toString();
+      const signals = [
+        navigator.userAgent, navigator.language, screen.width + 'x' + screen.height,
+        new Date().getTimezoneOffset(), navigator.hardwareConcurrency || '?',
+        navigator.platform, !!navigator.maxTouchPoints, pixelData.slice(0, 300)
+      ];
+      let hash = 0;
+      const str = signals.join('|');
+      for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+      }
+      return hash.toString(36);
+    }
+
+    const STORAGE_TOKEN = "scratch4_token";
+    const STORAGE_FP = "scratch4_fp";
+    const STORAGE_GAME = "scratch4_game_data";
+
+    function getUrlToken() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('token');
+    }
+
+    function setUrlToken(token) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('token', token);
+      window.history.replaceState({}, '', url.toString());
+    }
+
+    async function securityCheck() {
+      const fp = await getFingerprint();
+      const storedToken = localStorage.getItem(STORAGE_TOKEN);
+      const storedFP = localStorage.getItem(STORAGE_FP);
+      const urlToken = getUrlToken();
+      let gameData = localStorage.getItem(STORAGE_GAME);
+      let parsedData = null;
+      if (gameData) {
+        try { parsedData = JSON.parse(gameData); } catch(e) {}
+      }
+
+      // First time visit
+      if (!storedToken && !storedFP && !urlToken) {
+        const newToken = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2);
+        localStorage.setItem(STORAGE_TOKEN, newToken);
+        localStorage.setItem(STORAGE_FP, fp);
+        setUrlToken(newToken);
+        const initData = { turnsUsed: 0, gameOver: false, finalResult: null };
+        localStorage.setItem(STORAGE_GAME, JSON.stringify(initData));
+        return { allowed: true, gameData: initData, reason: "" };
+      }
+
+      // Token mismatch = link shared to different device
+      if (storedToken && urlToken && storedToken !== urlToken) {
+        return { allowed: false, reason: "❌ Access Denied: This link is only for the original recipient!", gameData: null };
+      }
+      if (storedFP && fp !== storedFP) {
+        return { allowed: false, reason: "❌ Access Denied: Device mismatch! Link locked to original device.", gameData: null };
+      }
+      if (!parsedData) {
+        parsedData = { turnsUsed: 0, gameOver: false, finalResult: null };
+        localStorage.setItem(STORAGE_GAME, JSON.stringify(parsedData));
+      }
+      if (parsedData.gameOver === true) {
+        return { allowed: false, reason: "⛔ Game Over! You have used all 4 chances.", gameData: parsedData };
+      }
+      return { allowed: true, gameData: parsedData, reason: "" };
+    }
+
+    function saveGameData(data) {
+      localStorage.setItem(STORAGE_GAME, JSON.stringify(data));
+    }
+
+    // ==================== CANVAS SCRATCH ENGINE ====================
+    let canvas, ctx, currentResult, isRevealed = false, canScratch = true;
+    let scratchedArea = 0, totalArea = 0;
+    let onCompleteCallback = null;
+
+    function drawUnderlay(result) {
+      ctx.fillStyle = "#0a0804";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Gold border
+      ctx.strokeStyle = "#D4AF37";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(8, 8, canvas.width - 16, canvas.height - 16);
+      
+      // BIG NUMBER in center
+      ctx.font = `bold ${Math.floor(canvas.height * 0.24)}px "Courier New", monospace`;
+      ctx.fillStyle = result.isWin ? "#FFD700" : "#A67C2E";
+      ctx.textAlign = "center";
+      ctx.fillText(`${result.number}`, canvas.width/2, canvas.height/2 - 15);
+      ctx.textAlign = "left";
+      
+      // Prize name
+      ctx.font = `bold ${Math.floor(canvas.height * 0.07)}px "Segoe UI"`;
+      ctx.fillStyle = "#FFE484";
+      let pName = result.prize.name;
+      if (pName.length > 20) pName = pName.substring(0, 18) + "..";
+      ctx.fillText(pName, canvas.width/2 - 95, canvas.height - 65);
+      
+      // Prize value
+      ctx.font = `${Math.floor(canvas.height * 0.055)}px "Segoe UI"`;
+      ctx.fillStyle = "#FFB347";
+      ctx.fillText(result.prize.value, canvas.width/2 - 45, canvas.height - 30);
+    }
+
+    function drawCover() {
+      const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      grad.addColorStop(0, '#E0E0E8');
+      grad.addColorStop(0.3, '#B8BCC9');
+      grad.addColorStop(0.7, '#A0A5B5');
+      grad.addColorStop(1, '#C8CDD8');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = `bold ${Math.floor(canvas.width * 0.07)}px "Segoe UI"`;
+      ctx.fillStyle = "#2A2E45";
+      ctx.textAlign = "center";
+      ctx.fillText("💎 SCRATCH 💎", canvas.width/2, canvas.height/2);
+      ctx.font = "12px monospace";
+      ctx.fillStyle = "#4A4F6A";
+      ctx.fillText("← swipe to scratch →", canvas.width/2, canvas.height - 25);
+      ctx.textAlign = "left";
+    }
+
+    function initCanvas(resultObj, callback) {
+      currentResult = resultObj;
+      onCompleteCallback = callback;
+      isRevealed = false;
+      canScratch = true;
+      drawUnderlay(currentResult);
+      drawCover();
+      scratchedArea = 0;
+      totalArea = canvas.width * canvas.height;
+      canvas.style.pointerEvents = 'auto';
+    }
+
+    function scratch(x, y, radius = 22) {
+      if (!canScratch || isRevealed) return;
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+      scratchedArea += Math.PI * radius * radius;
+      if (scratchedArea / totalArea > 0.4 && !isRevealed) {
+        isRevealed = true;
+        canScratch = false;
+        // Full reveal
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = 'source-over';
+        drawUnderlay(currentResult);
+        canvas.style.pointerEvents = 'none';
+        if (onCompleteCallback) onCompleteCallback(currentResult);
+      }
+    }
+
+    function bindEvents() {
+      let drawing = false, lastX = 0, lastY = 0;
+      function getCoords(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        let cx, cy;
+        if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
+        else { cx = e.clientX; cy = e.clientY; }
+        let x = (cx - rect.left) * scaleX;
+        let y = (cy - rect.top) * scaleY;
+        return { x: Math.min(Math.max(0, x), canvas.width), y: Math.min(Math.max(0, y), canvas.height) };
+      }
+      const onStart = (e) => { e.preventDefault(); if (!canScratch) return; drawing = true; const { x, y } = getCoords(e); lastX = x; lastY = y; scratch(x, y, 24); };
+      const onMove = (e) => { if (!drawing || !canScratch) return; e.preventDefault(); const { x, y } = getCoords(e); const dist = Math.hypot(x - lastX, y - lastY); if (dist > 0) { const steps = Math.ceil(dist / 6); for (let i=0; i<=steps; i++) { const t=i/steps; scratch(lastX + (x-lastX)*t, lastY + (y-lastY)*t, 20); } } scratch(x, y, 22); lastX = x; lastY = y; };
+      const onEnd = (e) => { drawing = false; if (!isRevealed && (scratchedArea/totalArea) > 0.4) { isRevealed=true; canScratch=false; ctx.globalCompositeOperation='destination-out'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.globalCompositeOperation='source-over'; drawUnderlay(currentResult); canvas.style.pointerEvents='none'; if(onCompleteCallback) onCompleteCallback(currentResult); } e.preventDefault(); };
+      canvas.addEventListener('mousedown', onStart);
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onEnd);
+      canvas.addEventListener('touchstart', onStart, { passive: false });
+      canvas.addEventListener('touchmove', onMove, { passive: false });
+      canvas.addEventListener('touchend', onEnd);
+    }
+
+    // ==================== MAIN RENDER ====================
+    async function render() {
+      const app = document.getElementById('appRoot');
+      const security = await securityCheck();
+      if (!security.allowed) {
+        app.innerHTML = `<div class="denied-box"><div class="lock-icon">🔒</div><h2>${security.reason}</h2></div>`;
+        return;
+      }
+      let game = security.gameData;
+      if (game.gameOver) {
+        let msg = game.finalResult ? (game.finalResult.isWin ? `🏆 You won: ${game.finalResult.prize.name} ${game.finalResult.prize.value}` : "😔 No win this time") : "Game Over";
+        app.innerHTML = `<div class="gameover-box"><div class="lock-icon">🏁</div><h2>GAME OVER</h2><p>${msg}</p><p>You have used all 4 turns.</p></div>`;
+        return;
+      }
+      
+      const turnsUsed = game.turnsUsed || 0;
+      const currentTurn = turnsUsed + 1;
+      const turnsLeft = 4 - turnsUsed;
+      
+      // Generate result for this turn
+      const num = getRandomNumber(currentTurn);
+      const result = getResult(num, currentTurn);
+      
+      app.innerHTML = `
+        <div class="title-section">
+          <h1>✨ 4-TURN GOLD SCRATCH ✨</h1>
+          <div class="sub">secure device lock • only 4 chances</div>
+        </div>
+        <div class="turn-panel">
+          <div class="turn-counter">
+            <div class="turn-label">TURNS LEFT</div>
+            <div class="turn-value" id="turnDisplay">${turnsLeft}</div>
+          </div>
+        </div>
+        <div class="scratch-wrapper">
+          <div class="canvas-area">
+            <canvas id="scratchCanvas" width="550" height="330" style="width:100%; max-width:550px; aspect-ratio:550/330"></canvas>
+          </div>
+          <div class="prize-preview">
+            <div class="prize-label">🎁 YOUR PRIZE</div>
+            <div class="prize-name" id="prizeName">???</div>
+            <div class="prize-value" id="prizeVal">Scratch the card</div>
+            <div class="status-msg" id="statusMsg">✨ Turn ${currentTurn}/4 - Scratch to reveal ✨</div>
+          </div>
+        </div>
+        <div class="info-note">🎯 Turn 1,2,3: 0% win | Turn 4: 2% Jackpot chance | Device locked | 4 total turns</div>
+      `;
+      
+      canvas = document.getElementById('scratchCanvas');
+      canvas.width = 550;
+      canvas.height = 330;
+      ctx = canvas.getContext('2d');
+      
+      initCanvas(result, async (finalResult) => {
+        // Update UI
+        document.getElementById('prizeName').innerHTML = finalResult.isWin ? `🏆 ${finalResult.prize.name}` : `😔 ${finalResult.prize.name}`;
+        document.getElementById('prizeVal').innerHTML = finalResult.prize.value;
+        
+        if (finalResult.isWin) {
+          document.getElementById('statusMsg').innerHTML = "🎉 CONGRATULATIONS! YOU WON! 🎉";
+          canvasConfetti({ particleCount: 250, spread: 85, origin: { y: 0.6 }, colors: ['#FFD700','#FFA500','#FF8C00'] });
+          canvasConfetti({ particleCount: 120, spread: 130, origin: { y: 0.5, x: 0.2 } });
+          canvasConfetti({ particleCount: 120, spread: 130, origin: { y: 0.5, x: 0.8 } });
+          // Game over immediately on win
+          const newGame = { turnsUsed: turnsUsed + 1, gameOver: true, finalResult: finalResult };
+          saveGameData(newGame);
+          setTimeout(() => render(), 2500);
+        } else {
+          // Loss
+          const newTurns = turnsUsed + 1;
+          if (newTurns >= 4) {
+            document.getElementById('statusMsg').innerHTML = "💀 Game Over! No turns left.";
+            const newGame = { turnsUsed: newTurns, gameOver: true, finalResult: finalResult };
+            saveGameData(newGame);
+            setTimeout(() => render(), 2000);
+          } else {
+            document.getElementById('statusMsg').innerHTML = `⚠️ Turn ${currentTurn} over! Loading next chance... (${4 - newTurns} turns left)`;
+            const newGame = { turnsUsed: newTurns, gameOver: false, finalResult: null };
+            saveGameData(newGame);
+            setTimeout(() => render(), 1800);
+          }
+        }
+        
+        // Animate turn counter
+        const turnSpan = document.getElementById('turnDisplay');
+        if (turnSpan) {
+          turnSpan.classList.add('animate');
+          setTimeout(() => turnSpan.classList.remove('animate'), 500);
+          if (finalResult.isWin) turnSpan.innerText = "0";
+          else if (turnsUsed + 1 >= 4) turnSpan.innerText = "0";
+          else turnSpan.innerText = 4 - (turnsUsed + 1);
+        }
+      });
+      
+      bindEvents();
+    }
+    
+    render();
+  })();
+</script>
+</body>
+</html>
